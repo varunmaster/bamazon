@@ -61,9 +61,10 @@ function askCustomer(conn) {
                 }
             ], (err, res) => {
                 if (err) console.log("Error is: ", err);
-                quan = res[0].stock_quantity; //IMPORTANT: need this to retrieve just the VALUE of the query (which is `select stock_quantity from...`)
+                console.log(res[0].stock_quantity); //IMPORTANT: need this to retrieve just the VALUE of the query (which is `select stock_quantity from...`)
+                quan = res[0].stock_quantity;
             });
-            console.log('LOOK HERE FOR QUANT2: ', qan);
+            console.log('LOOK HERE FOR QUANT2: ', quan);
 
         //query to reduce the amount of quantity by user amount
         // var query = conn.query(
