@@ -22,10 +22,64 @@ function loginCallback(password) {
 } //loginCallback
 
 function displayAllItems(conn) {
-    var query = conn.query("Select * from products;",(err, res) => {
+    var query = conn.query("Select * from products;", (err, res) => {
         if (err) console.log("Error is: ", err);
-        console.table("Here is what we currently have in stock: \n", res);
+        console.log("Here is what we currently have in stock: \n");
+        console.table(res);
     });
-    console.log("This is the sql: ", query.sql);
-    conn.end();
+    // console.log("This is the sql: \n\n", query.sql);
+    askCustomer(conn);
+    // conn.end();
+}
+
+function askCustomer(conn) {
+    inquirer.prompt(
+        {
+            name: "prodID",
+            message: "What product would you like to buy (enter item_id)?",
+            type: "input",
+            validate: (id) => {
+                if (id >= 1 && id <= 10) {
+                    return true;
+                }
+                return false;
+            }
+        },
+        {
+            name: "quantity",
+            message: "Please enter the amount of items",
+            type: "input"
+            // validate: //write function to retrieve amount currently avail and confirm its more than user input
+        }
+    ).then((ans) => {
+        //retrieving the original quantity to be reduced by the user amount
+        var quan = 0;
+        var query = conn.query("Select stock_quantity from products where ?;",
+            [
+                {
+                    item_id: ans.prodID
+                }
+            ], (err, res) => {
+                if (err) console.log("Error is: ", err);
+                quan = res[0].stock_quantity; //IMPORTANT: need this to retrieve just the VALUE of the query (which is `select stock_quantity from...`)
+            });
+            console.log('LOOK HERE FOR QUANT2: ', qan);
+
+        //query to reduce the amount of quantity by user amount
+        // var query = conn.query(
+        //     "UPDATE products SET ? WHERE ?",
+        //     [
+        //         {
+        //             stock_quantity: parseInt(quan) - parseInt(ans.quantity)
+        //         },
+        //         {
+        //             item_id: ans.prodID
+        //         }
+        //     ], function (err, res) {
+        //         if (err) throw err;
+        //         console.log(res.affectedRows + " products updated!\n");
+        //     });
+        console.log("Query that is run: ", query.sql);
+        conn.end();
+    });
 }
