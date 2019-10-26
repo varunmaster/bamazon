@@ -82,7 +82,7 @@ function askCustomer(conn) {
                 if (err) console.log("Error is: ", err);
                 var orig = res[0].stock_quantity;
                 if (parseInt(orig) >= parseInt(ans.userQuantity)) { //if the original value in the DB is greater than userAmt, then update the db, otherwise throw insufficient quant
-                    conn.query("Select stock_quantity from products where ?;",
+                    conn.query("Select stock_quantity,price from products where ?;",
                         [
                             {
                                 item_id: ans.prodID
@@ -90,6 +90,8 @@ function askCustomer(conn) {
                         ], (err, res) => {
                             if (err) console.log("Error is: ", err);
                             var orig = res[0].stock_quantity; //IMPORTANT: need this to retrieve just the VALUE of the query (which is `select stock_quantity from...`)
+                            var total = parseInt(res[0].price * ans.userQuantity);
+                            console.log("Your total cost is: $", total);
                             updateDB(parseInt(orig), ans.userQuantity, ans.prodID, conn);
                         });
                 } else {
@@ -115,7 +117,7 @@ function updateDB(orig, userAmt, itemID, conn) {
             if (err) throw err;
             console.log(res.affectedRows + " products updated!\n");
         });
-    console.log("update query: ", query.sql);
+    // console.log("update query: ", query.sql);
     displayAllItems(conn);
     // conn.end();
 } //updateDB
