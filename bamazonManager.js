@@ -28,13 +28,13 @@ function listOptions(conn) {
                 name: "managerOption",
                 message: "Hello Manager, what would you like to do?",
                 type: "list",
-                choices: ["View Products for Sale", "View Low Inventory", "Add to Inventory", "Add New Product"]
+                choices: ["View Products for Sale", "View Low Inventory", "Add to Inventory", "Add New Product", "Exit"]
             }
         ]
     ).then((ans) => {
         switch (ans.managerOption) {
             case "View Products for Sale":
-                viewProducts(conn);
+                    displayAllItems(conn);
                 break;
             case "View Low Inventory":
                 lowInventory(conn);
@@ -51,4 +51,13 @@ function listOptions(conn) {
     });
 }
 
-
+function displayAllItems(conn) {
+    conn.query("Select * from products;", (err, res) => {
+        if (err) console.log("Error is: ", err);
+        console.log("Here is what we currently have in stock: \n");
+        console.table(res);
+    });
+    // console.log("This is the sql: \n\n", query.sql);
+    listOptions(conn);
+    // conn.end();
+} //displayAllItems
