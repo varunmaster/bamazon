@@ -1,6 +1,6 @@
 var inquirer = require("inquirer");
 
-var password = function () {
+var Password = function () {
     this.getPassword = function (callback) {
         inquirer.prompt({
             name: "password",
@@ -12,4 +12,4 @@ var password = function () {
     }
 }
 
-module.exports = password;
+module.exports = Password;

@@ -22,7 +22,7 @@ function loginCallback(password) {
 } //loginCallback
 
 function displayAllItems(conn) {
-    var query = conn.query("Select * from products;", (err, res) => {
+    conn.query("Select * from products;", (err, res) => {
         if (err) console.log("Error is: ", err);
         console.log("Here is what we currently have in stock: \n");
         console.table(res);
@@ -30,7 +30,7 @@ function displayAllItems(conn) {
     // console.log("This is the sql: \n\n", query.sql);
     askCustomer(conn);
     // conn.end();
-}
+} //displayAllItems
 
 function askCustomer(conn) {
     inquirer.prompt(
@@ -62,25 +62,29 @@ function askCustomer(conn) {
             ], (err, res) => {
                 if (err) console.log("Error is: ", err);
                 console.log(res[0].stock_quantity); //IMPORTANT: need this to retrieve just the VALUE of the query (which is `select stock_quantity from...`)
-                quan = res[0].stock_quantity;
+                // quan = res[0].stock_quantity;
+                updateDB(parseInt(res[0].stock_quantity), ans.quantity, ans.prodID, conn);
             });
-            console.log('LOOK HERE FOR QUANT2: ', quan);
-
-        //query to reduce the amount of quantity by user amount
-        // var query = conn.query(
-        //     "UPDATE products SET ? WHERE ?",
-        //     [
-        //         {
-        //             stock_quantity: parseInt(quan) - parseInt(ans.quantity)
-        //         },
-        //         {
-        //             item_id: ans.prodID
-        //         }
-        //     ], function (err, res) {
-        //         if (err) throw err;
-        //         console.log(res.affectedRows + " products updated!\n");
-        //     });
         console.log("Query that is run: ", query.sql);
-        conn.end();
+
     });
-}
+}//askCustomer
+
+function updateDB(orig, userAmt, itemID, conn) {
+    //query to reduce the amount of quantity by user amount
+    var query = conn.query(
+        "UPDATE products SET ? WHERE ?",
+        [
+            {
+                stock_quantity: parseInt(orig) - parseInt(userAmt)
+            },
+            {
+                item_id: itemID
+            }
+        ], function (err, res) {
+            if (err) throw err;
+            console.log(res.affectedRows + " products updated!\n");
+        });
+        console.log("update query: ", query.sql);
+    conn.end();
+} //updateDB
