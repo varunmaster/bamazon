@@ -34,26 +34,27 @@ function displayAllItems(conn) {
 
 function askCustomer(conn) {
     inquirer.prompt(
-        {
-            name: "prodID",
-            message: "What product would you like to buy (enter item_id)?",
-            type: "input",
-            validate: (id) => {
-                if (id >= 1 && id <= 10) {
-                    return true;
+        [
+            {
+                name: "prodID",
+                message: "What product would you like to buy (enter item_id)?",
+                type: "input",
+                validate: (id) => {
+                    if (id >= 1 && id <= 10) {
+                        return true;
+                    }
+                    return false;
                 }
-                return false;
+            },
+            {
+                name: "userQuantity",
+                message: "Please enter the amount of items",
+                type: "input"
+                // validate: //write function to retrieve amount currently avail and confirm its more than user input
             }
-        },
-        {
-            name: "quantity",
-            message: "Please enter the amount of items",
-            type: "input"
-            // validate: //write function to retrieve amount currently avail and confirm its more than user input
-        }
+        ]
     ).then((ans) => {
         //retrieving the original quantity to be reduced by the user amount
-        var quan = 0;
         var query = conn.query("Select stock_quantity from products where ?;",
             [
                 {
@@ -61,19 +62,16 @@ function askCustomer(conn) {
                 }
             ], (err, res) => {
                 if (err) console.log("Error is: ", err);
-                console.log(res[0].stock_quantity); //IMPORTANT: need this to retrieve just the VALUE of the query (which is `select stock_quantity from...`)
-                // quan = res[0].stock_quantity;
-                updateDB(parseInt(res[0].stock_quantity), ans.quantity, ans.prodID, conn);
+                var orig = res[0].stock_quantity; //IMPORTANT: need this to retrieve just the VALUE of the query (which is `select stock_quantity from...`)
+                updateDB(parseInt(orig), ans.userQuantity, ans.prodID, conn);
             });
-        console.log("Query that is run: ", query.sql);
-
     });
 }//askCustomer
 
 function updateDB(orig, userAmt, itemID, conn) {
     //query to reduce the amount of quantity by user amount
     var query = conn.query(
-        "UPDATE products SET ? WHERE ?",
+        "UPDATE products SET ? WHERE ?;",
         [
             {
                 stock_quantity: parseInt(orig) - parseInt(userAmt)
@@ -85,6 +83,6 @@ function updateDB(orig, userAmt, itemID, conn) {
             if (err) throw err;
             console.log(res.affectedRows + " products updated!\n");
         });
-        console.log("update query: ", query.sql);
+    console.log("update query: ", query.sql);
     conn.end();
 } //updateDB
