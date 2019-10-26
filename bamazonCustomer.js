@@ -53,23 +53,30 @@ function askCustomer(conn) {
             }
         ]
     ).then((ans) => {
-        if (checkDBForQuantity(ans.userQuantity, ans.prodID, conn)) {
-            console.log("Insufficient quantity!");
-            askCustomer(conn);
-        } else {
-            //retrieving the original quantity to be reduced by the user amount
-            conn.query("Select stock_quantity from products where ?;",
-                [
-                    {
-                        item_id: ans.prodID
-                    }
-                ], (err, res) => {
-                    if (err) console.log("Error is: ", err);
-                    var orig = res[0].stock_quantity; //IMPORTANT: need this to retrieve just the VALUE of the query (which is `select stock_quantity from...`)
-                    updateDB(parseInt(orig), ans.userQuantity, ans.prodID, conn);
-                });
-            // displayAllItems(conn);
-        }
+        //retrieving the original quantity to be reduced by the user amount
+        conn.query("Select stock_quantity from products where ?;",
+            [
+                {
+                    item_id: ans.prodID
+                }
+            ], (err, res) => {
+                if (err) console.log("Error is: ", err);
+                var orig = res[0].stock_quantity;
+                if (parseInt(orig) > parseInt(ans.userQuantity)) { //if the original value in the DB is greater than userAmt, then update the db, otherwise throw insufficient quant
+                    conn.query("Select stock_quantity from products where ?;",
+                        [
+                            {
+                                item_id: ans.prodID
+                            }
+                        ], (err, res) => {
+                            if (err) console.log("Error is: ", err);
+                            var orig = res[0].stock_quantity; //IMPORTANT: need this to retrieve just the VALUE of the query (which is `select stock_quantity from...`)
+                            updateDB(parseInt(orig), ans.userQuantity, ans.prodID, conn);
+                        });
+                } else {
+                    console.log("Insufficient quantity~")
+                }
+            });
     });
 }//askCustomer
 
@@ -89,22 +96,6 @@ function updateDB(orig, userAmt, itemID, conn) {
             console.log(res.affectedRows + " products updated!\n");
         });
     console.log("update query: ", query.sql);
-    conn.end();
+    displayAllItems(conn);
+    // conn.end();
 } //updateDB
-
-function checkDBForQuantity(userQuantity, itemID, conn) {
-    conn.query("Select stock_quantity from products where ?;",
-        [
-            {
-                item_id: itemID
-            }
-        ], (err, res) => {
-            if (err) console.log("Error is: ", err);
-            var orig = res[0].stock_quantity;
-            if (orig > userQuantity) {
-                return true;
-            } else {
-                return false;
-            }
-        });
-}
