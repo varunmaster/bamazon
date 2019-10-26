@@ -2,7 +2,7 @@ var mysql = require("mysql");
 var inquirer = require("inquirer");
 var Password = require("./passwordPrompt");
 
-new Password().getPassword(loginCallback);
+new Password().getPassword(loginCallback); // main/entry-point
 
 function loginCallback(password) {
     var connection = mysql.createConnection({
@@ -28,9 +28,28 @@ function displayAllItems(conn) {
         console.table(res);
     });
     // console.log("This is the sql: \n\n", query.sql);
-    askCustomer(conn);
+    displayChoices(conn);
     // conn.end();
 } //displayAllItems
+
+function displayChoices(conn) {
+    inquirer.prompt(
+        [
+            {
+                name: "userChoice",
+                message: "What would you like to do?",
+                type: "list",
+                choices: ["Buy something", "Exit"]
+            }
+        ]
+    ).then((ans) => {
+        if(ans.userChoice === "Buy something") askCustomer(conn);
+        else {
+            conn.end(); 
+            process.exit(0);
+        }
+    });
+}
 
 function askCustomer(conn) {
     inquirer.prompt(
@@ -62,7 +81,7 @@ function askCustomer(conn) {
             ], (err, res) => {
                 if (err) console.log("Error is: ", err);
                 var orig = res[0].stock_quantity;
-                if (parseInt(orig) > parseInt(ans.userQuantity)) { //if the original value in the DB is greater than userAmt, then update the db, otherwise throw insufficient quant
+                if (parseInt(orig) >= parseInt(ans.userQuantity)) { //if the original value in the DB is greater than userAmt, then update the db, otherwise throw insufficient quant
                     conn.query("Select stock_quantity from products where ?;",
                         [
                             {
