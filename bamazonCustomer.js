@@ -74,7 +74,8 @@ function askCustomer(conn) {
                             updateDB(parseInt(orig), ans.userQuantity, ans.prodID, conn);
                         });
                 } else {
-                    console.log("Insufficient quantity~")
+                    console.log("Insufficient quantity~");
+                    askCustomer(conn);
                 }
             });
     });
