@@ -48,22 +48,35 @@ function askCustomer(conn) {
             },
             {
                 name: "userQuantity",
-                message: "Please enter the amount of items",
+                message: "Please enter the amount of item",
                 type: "input"
-                // validate: //write function to retrieve amount currently avail and confirm its more than user input
             }
         ]
     ).then((ans) => {
         //retrieving the original quantity to be reduced by the user amount
-        var query = conn.query("Select stock_quantity from products where ?;",
+        conn.query("Select stock_quantity from products where ?;",
             [
                 {
                     item_id: ans.prodID
                 }
             ], (err, res) => {
                 if (err) console.log("Error is: ", err);
-                var orig = res[0].stock_quantity; //IMPORTANT: need this to retrieve just the VALUE of the query (which is `select stock_quantity from...`)
-                updateDB(parseInt(orig), ans.userQuantity, ans.prodID, conn);
+                var orig = res[0].stock_quantity;
+                if (parseInt(orig) > parseInt(ans.userQuantity)) { //if the original value in the DB is greater than userAmt, then update the db, otherwise throw insufficient quant
+                    conn.query("Select stock_quantity from products where ?;",
+                        [
+                            {
+                                item_id: ans.prodID
+                            }
+                        ], (err, res) => {
+                            if (err) console.log("Error is: ", err);
+                            var orig = res[0].stock_quantity; //IMPORTANT: need this to retrieve just the VALUE of the query (which is `select stock_quantity from...`)
+                            updateDB(parseInt(orig), ans.userQuantity, ans.prodID, conn);
+                        });
+                } else {
+                    console.log("Insufficient quantity~");
+                    askCustomer(conn);
+                }
             });
     });
 }//askCustomer
@@ -84,5 +97,6 @@ function updateDB(orig, userAmt, itemID, conn) {
             console.log(res.affectedRows + " products updated!\n");
         });
     console.log("update query: ", query.sql);
-    conn.end();
+    displayAllItems(conn);
+    // conn.end();
 } //updateDB

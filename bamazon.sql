@@ -48,4 +48,6 @@ set product_name = 'Life', department_name = 'Other', price = 1000000, stock_qua
 ----------------------------------------------------------------------------------------------------------------
 select * from products;
 
-Select stock_quantity from products where item_id = '1';
+Select * from products;
+
+update products set stock_quantity = 300 where item_id = 1;
