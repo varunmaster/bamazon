@@ -51,3 +51,4 @@ select * from products;
 Select * from products;
 
 update products set stock_quantity = 300 where item_id = 1;
+
