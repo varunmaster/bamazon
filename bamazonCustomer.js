@@ -96,9 +96,10 @@ function askCustomer(conn) {
                         });
                 } else {
                     console.log("Insufficient quantity~" + "\n");
-                    askCustomer(conn);
+                    // displayAllItems(conn);
                 }
             });
+            displayAllItems(conn);
     });
 }//askCustomer
 
@@ -118,6 +119,6 @@ function updateDB(orig, userAmt, itemID, conn) {
             console.log(res.affectedRows + " products updated!\n");
         });
     // console.log("update query: ", query.sql);
-    displayAllItems(conn);
+    displayChoices(conn);
     // conn.end();
 } //updateDB
