@@ -23,8 +23,8 @@ function loginCallback(password) {
 
 function displayAllItems(conn) {
     conn.query("Select * from products;", (err, res) => {
-        if (err) console.log("Error is: ", err);
-        console.log("Here is what we currently have in stock: \n");
+        if (err) console.log("Error is: ", err + "\n");
+        console.log("Here is what we currently have in stock: \n\n");
         console.table(res);
     });
     // console.log("This is the sql: \n\n", query.sql);
@@ -79,7 +79,7 @@ function askCustomer(conn) {
                     item_id: ans.prodID
                 }
             ], (err, res) => {
-                if (err) console.log("Error is: ", err);
+                if (err) console.log("Error is: ", err + "\n");
                 var orig = res[0].stock_quantity;
                 if (parseInt(orig) >= parseInt(ans.userQuantity)) { //if the original value in the DB is greater than userAmt, then update the db, otherwise throw insufficient quant
                     conn.query("Select stock_quantity,price from products where ?;",
@@ -88,14 +88,14 @@ function askCustomer(conn) {
                                 item_id: ans.prodID
                             }
                         ], (err, res) => {
-                            if (err) console.log("Error is: ", err);
+                            if (err) console.log("Error is: ", err + "\n");
                             var orig = res[0].stock_quantity; //IMPORTANT: need this to retrieve just the VALUE of the query (which is `select stock_quantity from...`)
                             var total = parseInt(res[0].price * ans.userQuantity);
-                            console.log("Your total cost is: $", total);
+                            console.log("Your total cost is: $", total + "\n");
                             updateDB(parseInt(orig), ans.userQuantity, ans.prodID, conn);
                         });
                 } else {
-                    console.log("Insufficient quantity~");
+                    console.log("Insufficient quantity~" + "\n");
                     askCustomer(conn);
                 }
             });

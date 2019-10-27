@@ -53,9 +53,10 @@ function listOptions(conn) {
 
 function displayAllItems(conn) {
     conn.query("Select * from products;", (err, res) => {
-        if (err) console.log("Error is: ", err);
-        console.log("Here is what we currently have in stock: \n");
+        if (err) console.log("Error is: ", err + "\n");
+        console.log("Here is what we currently have in stock: \n\n");
         console.table(res);
+        console.log("\n\n")
     });
     // console.log("This is the sql: \n\n", query.sql);
     listOptions(conn);
@@ -64,8 +65,60 @@ function displayAllItems(conn) {
 
 function lowInventory(conn) {
     conn.query("Select * from products where stock_quantity < 5;", (err, res) => {
-        if (err) console.log("Error is: ", err);
+        if (err) console.log("Error is: ", err + "\n");
         console.table(res);
+        console.log("\n\n")
     });
     listOptions(conn);
+}
+
+function addInventory(conn) {
+    displayAllItems(conn);
+    inquirer.prompt(
+        [
+            {
+                name: "item",
+                message: "What item would you like to add inventory to (enter item_id)?",
+                type: "number",
+                validate: (id) => {
+                    if (id >= 1 && id <= 10) {
+                        return true;
+                    }
+                    return false;
+                }
+            },
+            {
+                name: "quantity",
+                message: "How much additional quantity would you like to add?",
+                type: "number"
+            }
+        ]
+    ).then((ans) => {
+        //getting original value which will be added to ans.quantity 
+        conn.query("Select stock_quantity from products where ?;",
+            [
+                {
+                    item_id: ans.item
+                }
+            ], (err, res) => {
+                if (err) console.log("Error is: ", err + "\n");
+                var orig = res[0].stock_quantity;
+                if (orig) {
+                    conn.query("UPDATE products SET ? where ?;",
+                        [
+                            {
+                                stock_quantity: parseInt(orig) + parseInt(ans.quantity)
+                            },
+                            {
+                                item_id: ans.item
+                            }
+                        ],
+                        (err, res) => {
+                            if (err) console.log("Error is: ", err + "\n");
+                            else console.log(res.affectedRows + " products updated!\n\n");
+                        });
+                }
+            });
+        displayAllItems(conn);
+    });
 }
