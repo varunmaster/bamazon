@@ -40,7 +40,7 @@ function listOptions(conn) {
                 lowInventory(conn);
                 break;
             case "Add to Inventory":
-                displayAllItems(conn);
+                // displayAllItems(conn);
                 addInventory(conn);
                 break;
             case "Add New Product":
@@ -58,10 +58,10 @@ function displayAllItems(conn) {
         if (err) console.log("Error is: ", err + "\n");
         console.log("Here is what we currently have in stock: \n\n");
         console.table(res);
-        console.log("\n\n")
+        console.log("\n\n");
+        listOptions(conn);
     });
     // console.log("This is the sql: \n\n", query.sql);
-    listOptions(conn);
 } //displayAllItems
 
 function lowInventory(conn) {
@@ -69,8 +69,8 @@ function lowInventory(conn) {
         if (err) console.log("Error is: ", err + "\n");
         console.table(res);
         console.log("\n\n")
+        listOptions(conn);
     });
-    listOptions(conn);
 }
 
 function addInventory(conn) {
@@ -117,9 +117,10 @@ function addInventory(conn) {
                             if (err) console.log("Error is: ", err + "\n");
                             else console.log(res.affectedRows + " products updated!\n\n");
                         });
+                    listOptions(conn);
                 }
             });
-        listOptions(conn);
+
     });
 }
 
@@ -153,8 +154,8 @@ function newProduct(conn) {
                 (err, res) => {
                     if (err) console.log("Error is: ", err + "\n");
                     else console.log(res.affectedRows + " products updated!\n\n");
+                    listOptions(conn);
                 });
             // console.log("LOOK HERE: ", query.sql);
-            listOptions(conn);
         });
 }
