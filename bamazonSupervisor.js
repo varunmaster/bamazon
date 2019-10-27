@@ -37,7 +37,7 @@ function supervisorChoices(conn) {
                 viewSales(conn);
                 break;
             case "Create New Department":
-                //newDept(conn)
+                newDept(conn);
                 break;
             default:
                 conn.end();
@@ -48,10 +48,37 @@ function supervisorChoices(conn) {
 
 function viewSales(conn) {
     conn.query("select d.department_id, d.department_name, d.over_head_costs, p.product_sales, (product_sales - d.over_head_costs) AS total_profit from departments d inner join products p on d.department_name = p.department_name group by d.department_name, d.department_id, d.over_head_costs, p.product_sales, total_profit;",
-    (err, res) => {
-        if (err) console.log("Error is: ", err);
-        console.table(res);
-        console.log("\n\n");
-        supervisorChoices(conn);
+        (err, res) => {
+            if (err) console.log("Error is: ", err);
+            console.table(res);
+            console.log("\n\n");
+            supervisorChoices(conn);
+        });
+}
+
+function newDept(conn) {
+    inquirer.prompt(
+        [
+            {
+                name: "deptName",
+                message: "What is the name of the new department you want to add?",
+                type: "input"
+            },
+            {
+                name: "overheadCost",
+                message: "What is the over head cost of this department?",
+                type: "number"
+            }
+        ]
+    ).then((ans) => {
+        var values = [ans.deptName, parseInt(ans.overheadCost)];
+        //if no 'products' exist for this department then it will not show in the viewSales() as that is an inner join
+        conn.query("INSERT INTO departments (department_name, over_head_costs) values (?);",
+            [values],
+            (err, res) => {
+                if (err) console.log("Error is: ", err + "\n");
+                else console.log(res.affectedRows + " products updated!\n\n");
+                supervisorChoices(conn);
+            });
     });
 }
