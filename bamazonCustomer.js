@@ -26,9 +26,8 @@ function displayAllItems(conn) {
         if (err) console.log("Error is: ", err + "\n");
         console.log("Here is what we currently have in stock: \n\n");
         console.table(res);
+        displayChoices(conn);
     });
-    // console.log("This is the sql: \n\n", query.sql);
-    displayChoices(conn);
     // conn.end();
 } //displayAllItems
 
@@ -43,9 +42,9 @@ function displayChoices(conn) {
             }
         ]
     ).then((ans) => {
-        if(ans.userChoice === "Buy something") askCustomer(conn);
+        if (ans.userChoice === "Buy something") askCustomer(conn);
         else {
-            conn.end(); 
+            conn.end();
             process.exit(0);
         }
     });
@@ -96,10 +95,9 @@ function askCustomer(conn) {
                         });
                 } else {
                     console.log("Insufficient quantity~" + "\n");
-                    // displayAllItems(conn);
+                    displayAllItems(conn);
                 }
             });
-            displayAllItems(conn);
     });
 }//askCustomer
 
@@ -117,8 +115,8 @@ function updateDB(orig, userAmt, itemID, conn) {
         ], function (err, res) {
             if (err) throw err;
             console.log(res.affectedRows + " products updated!\n");
+            displayChoices(conn);
         });
     // console.log("update query: ", query.sql);
-    displayChoices(conn);
     // conn.end();
 } //updateDB
