@@ -26,7 +26,7 @@ function listOptions(conn) {
         [
             {
                 name: "managerOption",
-                message: "Hello Manager, what would you like to do?",
+                message: "Hello Manager, what would you like to do?\n",
                 type: "list",
                 choices: ["View Products for Sale", "View Low Inventory", "Add to Inventory", "Add New Product", "Exit"]
             }
@@ -40,12 +40,14 @@ function listOptions(conn) {
                 lowInventory(conn);
                 break;
             case "Add to Inventory":
+                displayAllItems(conn);
                 addInventory(conn);
                 break;
             case "Add New Product":
                 newProduct(conn);
                 break;
             default:
+                conn.end();
                 process.exit(0);
         }
     });
@@ -60,11 +62,10 @@ function displayAllItems(conn) {
     });
     // console.log("This is the sql: \n\n", query.sql);
     listOptions(conn);
-    // conn.end();
 } //displayAllItems
 
 function lowInventory(conn) {
-    conn.query("Select * from products where stock_quantity < 5;", (err, res) => {
+    conn.query("Select * from products where stock_quantity <= 5;", (err, res) => {
         if (err) console.log("Error is: ", err + "\n");
         console.table(res);
         console.log("\n\n")
@@ -73,12 +74,11 @@ function lowInventory(conn) {
 }
 
 function addInventory(conn) {
-    displayAllItems(conn);
     inquirer.prompt(
         [
             {
                 name: "item",
-                message: "What item would you like to add inventory to (enter item_id)?",
+                message: "What item would you like to add inventory to (enter item_id)?\n",
                 type: "number",
                 validate: (id) => {
                     if (id >= 1 && id <= 10) {
@@ -89,7 +89,7 @@ function addInventory(conn) {
             },
             {
                 name: "quantity",
-                message: "How much additional quantity would you like to add?",
+                message: "How much additional quantity would you like to add?\n",
                 type: "number"
             }
         ]
@@ -119,6 +119,42 @@ function addInventory(conn) {
                         });
                 }
             });
-        displayAllItems(conn);
+        listOptions(conn);
     });
+}
+
+function newProduct(conn) {
+    inquirer.prompt(
+        [
+            {
+                name: "name",
+                message: "What is the product name you want to add?\n",
+                type: "input"
+            },
+            {
+                name: "dept",
+                message: "What department does this item belong to?\n",
+                type: "input"
+            },
+            {
+                name: "price",
+                message: "What is the price of the product?\n",
+                type: "number"
+            },
+            {
+                name: "stock",
+                message: "What is the current stock available?\n",
+                type: "number"
+            }
+        ]).then((ans) => {
+            var values = [ans.name, ans.dept, parseInt(ans.price), parseInt(ans.stock)];
+            conn.query("INSERT INTO products (product_name, department_name, price, stock_quantity) VALUES (?);",
+                [values],
+                (err, res) => {
+                    if (err) console.log("Error is: ", err + "\n");
+                    else console.log(res.affectedRows + " products updated!\n\n");
+                });
+            // console.log("LOOK HERE: ", query.sql);
+            listOptions(conn);
+        });
 }
