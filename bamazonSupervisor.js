@@ -47,7 +47,7 @@ function supervisorChoices(conn) {
 }
 
 function viewSales(conn) {
-    conn.query("select d.department_id, d.department_name, d.over_head_costs, p.product_sales, (product_sales - d.over_head_costs) AS total_profit from departments d inner join products p on d.department_name = p.department_name group by d.department_name, d.department_id, d.over_head_costs, p.product_sales, total_profit;",
+    conn.query("select d.department_id, d.department_name, d.over_head_costs, p.product_sales, (product_sales - d.over_head_costs) AS total_profit from departments d left join products p on d.department_name = p.department_name group by d.department_name, d.department_id, d.over_head_costs, p.product_sales, total_profit;",
         (err, res) => {
             if (err) console.log("Error is: ", err);
             console.table(res);
