@@ -34,7 +34,7 @@ function listOptions(conn) {
     ).then((ans) => {
         switch (ans.managerOption) {
             case "View Products for Sale":
-                    displayAllItems(conn);
+                displayAllItems(conn);
                 break;
             case "View Low Inventory":
                 lowInventory(conn);
@@ -61,3 +61,11 @@ function displayAllItems(conn) {
     listOptions(conn);
     // conn.end();
 } //displayAllItems
+
+function lowInventory(conn) {
+    conn.query("Select * from products where stock_quantity < 5;", (err, res) => {
+        if (err) console.log("Error is: ", err);
+        console.table(res);
+    });
+    listOptions(conn);
+}
