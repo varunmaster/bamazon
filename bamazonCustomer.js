@@ -81,17 +81,18 @@ function askCustomer(conn) {
                 if (err) console.log("Error is: ", err + "\n");
                 var orig = res[0].stock_quantity;
                 if (parseInt(orig) >= parseInt(ans.userQuantity)) { //if the original value in the DB is greater than userAmt, then update the db, otherwise throw insufficient quant
-                    conn.query("Select stock_quantity,price from products where ?;",
+                    conn.query("Select stock_quantity, price, product_sales from products where ?;",
                         [
                             {
                                 item_id: ans.prodID
                             }
                         ], (err, res) => {
                             if (err) console.log("Error is: ", err + "\n");
-                            var orig = res[0].stock_quantity; //IMPORTANT: need this to retrieve just the VALUE of the query (which is `select stock_quantity from...`)
+                            var origQuantity = res[0].stock_quantity; //IMPORTANT: need this to retrieve just the VALUE of the query (which is `select stock_quantity from...`)
+                            var origSales = res[0].product_sales;
                             var total = parseInt(res[0].price * ans.userQuantity);
                             console.log("Your total cost is: $", total + "\n");
-                            updateDB(parseInt(orig), ans.userQuantity, ans.prodID, conn);
+                            updateDB(origQuantity, ans.userQuantity, origSales, total, ans.prodID, conn);
                         });
                 } else {
                     console.log("Insufficient quantity~" + "\n");
@@ -101,13 +102,16 @@ function askCustomer(conn) {
     });
 }//askCustomer
 
-function updateDB(orig, userAmt, itemID, conn) {
+function updateDB(orig, userAmt, origSale, totalSale, itemID, conn) {
     //query to reduce the amount of quantity by user amount
     var query = conn.query(
-        "UPDATE products SET ? WHERE ?;",
+        "UPDATE products SET ?, ? WHERE ?;",
         [
             {
                 stock_quantity: parseInt(orig) - parseInt(userAmt)
+            },
+            {
+                product_sales: parseInt(origSale) + parseInt(totalSale)
             },
             {
                 item_id: itemID
@@ -115,6 +119,7 @@ function updateDB(orig, userAmt, itemID, conn) {
         ], function (err, res) {
             if (err) throw err;
             console.log(res.affectedRows + " products updated!\n");
+            displayAllItems(conn);
             displayChoices(conn);
         });
     // console.log("update query: ", query.sql);

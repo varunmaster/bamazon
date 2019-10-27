@@ -44,11 +44,39 @@ set product_name = 'Fuzzy Blanket', department_name = 'Other', price = 35, stock
 
 insert into products
 set product_name = 'Life', department_name = 'Other', price = 1000000, stock_quantity = 1;
+----------------------------------------------------------------------------------------------------------------
+create table departments(
+department_id INTEGER AUTO_INCREMENT NOT NULL,
+department_name VARCHAR(100) NOT NULL,
+over_head_costs INTEGER(10) NOT NULL,
+PRIMARY KEY (department_id)
+);
 
+insert into departments
+set department_name = 'Electronics', over_head_costs = 500;
+
+insert into departments
+set department_name = 'Entertainment', over_head_costs = 200;
+
+insert into departments
+set department_name = 'Clothing', over_head_costs = 100;
+
+insert into departments
+set department_name = 'Stationery', over_head_costs = 80;
+
+insert into departments
+set department_name = 'Other', over_head_costs = 500;
+
+alter table products
+add column product_sales integer(15) not null;
 ----------------------------------------------------------------------------------------------------------------
 select * from products;
 
-update products set stock_quantity = 300 where item_id = 1;
+select distinct(department_name) from products;
+
+select * from departments;
+
+update products set stock_quantity = 300, product_sales = 0 where item_id = 1;
 
 delete from products where item_id > 10;
 
