@@ -43,7 +43,7 @@ Please see below demo:
 ​
 1. By using `node bamazonSupervisor.js`, a supervisor is able to review deppartment sales and create new departments.
 
-2. Once a new department has been added, *there must be products added under that department otherwise the resulting query will return null*
+2. Once a new department has been added, **there must be products added under that department otherwise the resulting query will return null**
 
 Please see below demo:
 ​
