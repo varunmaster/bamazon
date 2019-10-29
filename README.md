@@ -41,16 +41,10 @@ Please see below demo:
 ------
 ### bamazon_Supervisor
 ​
-1. By using `node bamazonSupervisor.js`, as a supervisor is able to review deppartment sales and create new departments.
-​
-2. Once new department generated, need to add a new item with manager app under that department in order to show department record in the table.
-​
+1. By using `node bamazonSupervisor.js`, a supervisor is able to review deppartment sales and create new departments.
+
+2. Once a new department has been added, *there must be products added under that department otherwise the resulting query will return null*
+
 Please see below demo:
 ​
-![bamazon_Supervisor]()
-​
-![bamazon_Supervisor]()
-​
-![bamazon_Supervisor]()
-​
-![bamazon_Supervisor]()
+![bamazon_Supervisor](/images/supervisor.gif)
