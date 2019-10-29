@@ -120,7 +120,6 @@ function updateDB(orig, userAmt, origSale, totalSale, itemID, conn) {
             if (err) throw err;
             console.log(res.affectedRows + " products updated!\n");
             displayAllItems(conn);
-            displayChoices(conn);
         });
     // console.log("update query: ", query.sql);
     // conn.end();
