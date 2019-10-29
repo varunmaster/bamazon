@@ -116,8 +116,8 @@ function addInventory(conn) {
                         (err, res) => {
                             if (err) console.log("Error is: ", err + "\n");
                             else console.log(res.affectedRows + " products updated!\n\n");
+                            listOptions(conn);
                         });
-                    listOptions(conn);
                 }
             });
 
@@ -148,8 +148,8 @@ function newProduct(conn) {
                 type: "number"
             }
         ]).then((ans) => {
-            var values = [ans.name, ans.dept, parseInt(ans.price), parseInt(ans.stock)];
-            conn.query("INSERT INTO products (product_name, department_name, price, stock_quantity) VALUES (?);",
+            var values = [ans.name, ans.dept, parseInt(ans.price), parseInt(ans.stock), 0];
+            conn.query("INSERT INTO products (product_name, department_name, price, stock_quantity, product_sales) VALUES (?);",
                 [values],
                 (err, res) => {
                     if (err) console.log("Error is: ", err + "\n");

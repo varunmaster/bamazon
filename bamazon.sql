@@ -74,7 +74,11 @@ select * from products;
 
 select distinct(department_name) from products;
 
-select * from departments;
+select * from departments; 
+
+select d.department_id, d.department_name, d.over_head_costs, p.product_sales, (product_sales - d.over_head_costs) AS total_profit 
+from departments d left join products p on d.department_name = p.department_name 
+group by d.department_name, d.department_id, d.over_head_costs, p.product_sales, total_profit;
 
 update products set stock_quantity = 300, product_sales = 0 where item_id = 1;
 

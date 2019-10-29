@@ -20,9 +20,6 @@ Create an application to practice **Javascript**, **Node.js** and **MySQL**.
 Please see below demo:
 ​
 ![bamazon_Customer](/images/customer.gif)
-​
-![bamazon_Customer]()
-​
 ------
 ### bamazon_Manager
 ​
@@ -32,22 +29,15 @@ Please see below demo:
 ​
     1. Review item inventory
 ​
-    2. List out lower inventory items
+    2. Display low inventory items
 ​
-    3. Add inventory to the item
+    3. Add inventory to items
 ​
     4. Add new items
 ​
 Please see below demo:
 ​
-![bamazon_Manager]()
-​
-![bamazon_Manager]()
-​
-![bamazon_Manager]()
-​
-![bamazon_Manager]()
-​
+![bamazon_Manager](/images/manager.gif)
 ------
 ### bamazon_Supervisor
 ​
