@@ -19,7 +19,7 @@ Create an application to practice **Javascript**, **Node.js** and **MySQL**.
 ​
 Please see below demo:
 ​
-![bamazon_Customer]()
+![bamazon_Customer](/images/customer.gif)
 ​
 ![bamazon_Customer]()
 ​
